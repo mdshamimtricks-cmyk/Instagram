@@ -36,7 +36,7 @@ def instagram_creator_logic(chat_id, range_key, count, password):
     num_url = "https://fastxotp.com/Access/@Bot/3oo9/public/api/getnum"
     otp_url = "https://fastxotp.com/Access/@Bot/3oo9/public/api/success-otp-info"
     
-    # 🔑 ভিডিও থেকে নেওয়া তোমার আসল অ্যাকাউন্ট এপিআই কি (Fixed)
+    # 🔑 ভিডিও থেকে নেওয়া তোমার আসল অ্যাকাউন্ট এপিআই কি
     headers = {
         "X-API-Key": "MURAD_FD980978DCC0298BA17259D8",
         "Content-Type": "application/json"
@@ -56,7 +56,11 @@ def instagram_creator_logic(chat_id, range_key, count, password):
             response = requests.post(num_url, headers=headers, json=payload)
             
             if response.status_code == 200:
-                num_response = response.json()
+                try:
+                    num_response = response.json()
+                except json.JSONDecodeError:
+                    bot.send_message(chat_id, "❌ Response was not valid JSON.")
+                    continue
                 
                 if num_response.get("meta", {}).get("status") == "ok":
                     data = num_response.get("data", {})
@@ -72,18 +76,20 @@ def instagram_creator_logic(chat_id, range_key, count, password):
                     for attempt in range(24): 
                         time.sleep(5)
                         try:
-                            otp_response = requests.get(otp_url, headers=headers).json()
-                            if otp_response.get("meta", {}).get("status") == "ok":
-                                otps_list = otp_response.get("data", {}).get("otps", [])
-                                
-                                # আমাদের তোলা নাম্বারের ওটিপি ম্যাচ করানো
-                                for otp_data in otps_list:
-                                    if str(otp_data.get("number")) == str(phone_number):
-                                        otp_code = otp_data.get("otp") 
-                                        otp_found = True
-                                        break
-                            if otp_found:
-                                break
+                            otp_resp = requests.get(otp_url, headers=headers)
+                            if otp_resp.status_code == 200:
+                                otp_response = otp_resp.json()
+                                if otp_response.get("meta", {}).get("status") == "ok":
+                                    otps_list = otp_response.get("data", {}).get("otps", [])
+                                    
+                                    # আমাদের তোলা নাম্বারের ওটিপি ম্যাচ করানো
+                                    for otp_data in otps_list:
+                                        if str(otp_data.get("number")) == str(phone_number):
+                                            otp_code = otp_data.get("otp") 
+                                            otp_found = True
+                                            break
+                                if otp_found:
+                                    break
                         except:
                             pass
                     
@@ -139,7 +145,6 @@ def handle_web_app_data(message):
 
 def run_bot():
     print("Bot is polling...")
-    # non_stop এবং skip_pending দিয়ে 409 Conflict এরর ফিক্স করা হয়েছে
     bot.infinity_polling(non_stop=True, skip_pending=True)
 
 if __name__ == "__main__":
