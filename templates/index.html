@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insta Creator Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1c1c1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+            text-align: center;
+        }
+        .container {
+            background: #2c2c2e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        h2 { color: #007aff; margin-bottom: 20px; }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #b0b0b5; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #3a3a3c;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        .btn {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #0056b3; }
+        #status { margin-top: 15px; font-weight: bold; color: #34c759; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Insta Account Bot Control</h2>
+        
+        <div class="form-group">
+            <label for="range">SMS Bot Range / API Key:</label>
+            <input type="text" id="range" placeholder="Telegram Bot theke pawa range/key din">
+        </div>
+
+        <div class="form-group">
+            <label for="count">Koyti Account Khulben?</label>
+            <input type="number" id="count" value="3" min="1" max="10">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Default Password:</label>
+            <input type="text" id="password" value="InstaPass2026@">
+        </div>
+
+        <button class="btn" onclick="startProcess()">Start Automation</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Telegram WebApp initialize
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Full screen open hobe
+
+        function startProcess() {
+            const range = document.getElementById('range').value;
+            const count = document.getElementById('count').value;
+            const password = document.getElementById('password').value;
+
+            if(!range) {
+                alert("Please enter a valid Range/API Key!");
+                return;
+            }
+
+            document.getElementById('status').innerText = "Processing started via Bot...";
+
+            // Data format kore Telegram Bot-er kache pathano
+            const data = {
+                action: "start_automation",
+                range: range,
+                count: parseInt(count),
+                password: password
+            };
+
+            // Telegram-e data send kora ebong Mini App bondho kora
+            tg.sendData(JSON.stringify(data));
+            tg.close();
+        }
+    </script>
+</body>
+  </html>
